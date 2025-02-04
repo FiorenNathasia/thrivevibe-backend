@@ -51,6 +51,7 @@ const getVideo = async (req, res) => {
   }
 };
 
+//PUT request for upvote
 const updateUpvote = async (req, res) => {
   const videoId = req.params.id;
   try {
@@ -58,9 +59,7 @@ const updateUpvote = async (req, res) => {
     if (!video) {
       res.status(404).send({ message: `Video with ID ${videoId} not found` });
     }
-    // const currentUpvotes = video.upvote || 0;
-    // const newUpvotes = currentUpvotes + 1;
-    // await db("videos").where({ id: videoId }).update({ upvote: newUpvotes });
+
     await db("videos").where({ id: videoId }).increment("upvote", 1);
     const updatedVideo = await db("videos").where({ id: videoId }).first();
     res.status(200).send({ data: updatedVideo });
@@ -69,6 +68,7 @@ const updateUpvote = async (req, res) => {
   }
 };
 
+//PUT request for downvote
 const updateDownvote = async (req, res) => {
   const videoId = req.params.id;
   try {

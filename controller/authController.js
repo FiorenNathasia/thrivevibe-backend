@@ -2,6 +2,7 @@ const db = require("../db/db");
 const bcrypt = require("bcrypt");
 const generateAccessToken = require("../utils/token");
 
+//POST request to create user
 const signup = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -43,6 +44,7 @@ const signup = async (req, res) => {
   }
 };
 
+//POST request to log in user
 const login = async (req, res) => {
   const { email, password } = req.body;
 
