@@ -47,9 +47,41 @@ const getVideo = async (req, res) => {
       throw new Error("Cannot find workout.");
     }
   } catch (error) {
-    return res
-      .status(400)
-      .send({ message: "There was an error retrieving video." });
+    res.status(400).send({ message: "There was an error retrieving video." });
+  }
+};
+
+const updateUpvote = async (req, res) => {
+  const videoId = req.params.id;
+  try {
+    const video = await db("videos").where({ id: videoId }).first();
+    if (!video) {
+      res.status(404).send({ message: `Video with ID ${videoId} not found` });
+    }
+    // const currentUpvotes = video.upvote || 0;
+    // const newUpvotes = currentUpvotes + 1;
+    // await db("videos").where({ id: videoId }).update({ upvote: newUpvotes });
+    await db("videos").where({ id: videoId }).increment("upvote", 1);
+    const updatedVideo = await db("videos").where({ id: videoId }).first();
+    res.status(200).send({ data: updatedVideo });
+  } catch (error) {
+    res.status(500).send({ message: `Error updating upvote count` });
+  }
+};
+
+const updateDownvote = async (req, res) => {
+  const videoId = req.params.id;
+  try {
+    const video = await db("videos").where({ id: videoId }).first();
+    if (!video) {
+      res.status(404).send({ message: `Video with ID ${videoId} not found` });
+    }
+
+    await db("videos").where({ id: videoId }).increment("downvote", 1);
+    const updatedVideo = await db("videos").where({ id: videoId }).first();
+    res.status(200).send({ data: updatedVideo });
+  } catch (error) {
+    res.status(500).send({ message: `Error updating upvote count` });
   }
 };
 
@@ -57,4 +89,6 @@ module.exports = {
   newVideo,
   getVideos,
   getVideo,
+  updateUpvote,
+  updateDownvote,
 };
