@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const authRouter = require("./routes/auth");
+const userRouter = require("./routes/user");
 const videoRouter = require("./routes/videos");
 const commentsRouter = require("./routes/comments");
 const feedRouter = require("./routes/feed");
@@ -15,6 +16,7 @@ app.use("/api/auth", authRouter);
 
 app.use(verify);
 
+app.use("/api/user", userRouter);
 app.use("/api/videos", videoRouter);
 app.use("/api/comments", commentsRouter);
 app.use("/api/feed", feedRouter);
