@@ -85,6 +85,29 @@ const updateDownvote = async (req, res) => {
   }
 };
 
+const editVideo = async (req, res) => {
+  const userId = res.locals.userId;
+  const videoId = req.params.id;
+  const videoUpdates = req.body;
+  try {
+    const video = await db("videos")
+      .where({ id: videoId, user_id: userId })
+      .first();
+
+    if (!video) {
+      throw new Error("Cannot find entry");
+    }
+
+    await db("videos")
+      .where({ id: videoId, user_id: userId })
+      .update(videoUpdates);
+    res.status(200).send({ message: "Video edited successfully!" });
+  } catch (error) {
+    console.log(error);
+    res.status(404).send({ message: "The error occured while editing video!" });
+  }
+};
+
 const deleteVideo = async (req, res) => {
   const userId = res.locals.userId;
   const videoId = req.params.id;
@@ -111,5 +134,6 @@ module.exports = {
   getVideo,
   updateUpvote,
   updateDownvote,
+  editVideo,
   deleteVideo,
 };
