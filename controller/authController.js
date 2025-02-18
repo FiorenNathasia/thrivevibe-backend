@@ -5,7 +5,42 @@ const generateAccessToken = require("../utils/token");
 //POST request to create user
 const signup = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
+
+    // Validate required fields
+    if (!firstName) {
+      return res.status(400).send({
+        message: "First name is required",
+      });
+    }
+    if (!lastName) {
+      return res.status(400).send({
+        message: "Last name is required",
+      });
+    }
+    if (!email) {
+      return res.status(400).send({
+        message: "Email is required",
+      });
+    }
+    if (!password) {
+      return res.status(400).send({
+        message: "Password is required",
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).send({ message: "Invalid email format" });
+    }
+    // Validate password strength
+    if (password.length < 8) {
+      return res
+        .status(400)
+        .send({ message: "Password must be at least 8 characters long" });
+    }
+
     //Check  if  user already exist
     const user = await db("users").where("email", email).first();
     if (user) {
@@ -24,8 +59,6 @@ const signup = async (req, res) => {
         password: hashedPassword,
       })
       .returning("*");
-    console.log(newUser);
-
     // Generate access token (assuming this is a helper function)
     const accessToken = generateAccessToken(newUser[0]);
 

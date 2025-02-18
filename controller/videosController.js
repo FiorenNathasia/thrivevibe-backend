@@ -18,7 +18,7 @@ const newVideo = async (req, res) => {
       .returning("*");
     return res.status(200).send({ data: newEntry[0] });
   } catch (error) {
-    res.status(500).send({ message: "There was an  error saving the entry." });
+    c;
   }
 };
 
@@ -85,10 +85,31 @@ const updateDownvote = async (req, res) => {
   }
 };
 
+const deleteVideo = async (req, res) => {
+  const userId = res.locals.userId;
+  const videoId = req.params.id;
+
+  try {
+    const video = await db("videos")
+      .where({ id: videoId, user_id: userId })
+      .first();
+
+    if (!video) {
+      throw new Error("Cannot find entry!");
+    }
+    const deletedVideo = await db("videos").where({ id: videoId }).del();
+
+    res.status(200).send({ message: "Video deleted successfully!" });
+  } catch (error) {
+    res.status(404).send({ message: "There was an error deleting video!" });
+  }
+};
+
 module.exports = {
   newVideo,
   getVideos,
   getVideo,
   updateUpvote,
   updateDownvote,
+  deleteVideo,
 };
