@@ -1,5 +1,4 @@
 const db = require("../db/db");
-const ytdl = require("@distube/ytdl-core");
 
 //POST request for new feature
 const newVideo = async (req, res) => {
@@ -11,12 +10,16 @@ const newVideo = async (req, res) => {
 
   const userId = res.locals.userId;
   try {
-    const videoInfo = await ytdl.getInfo(url);
-    const thumbnail =
-      videoInfo.videoDetails.thumbnails[
-        videoInfo.videoDetails.thumbnails.length - 1
-      ].url;
+    const videoData = await axios.get(
+      "https://api.supadata.ai/v1/youtube/video?id=" + videoUrl,
+      {
+        headers: {
+          "x-api-key": process.env.SUPADATA_KEY,
+        },
+      }
+    );
 
+    const thumbnail = videoData.data.thumbnail;
     const newEntry = await db("videos")
       .insert({
         user_id: userId,
