@@ -1,4 +1,5 @@
 const db = require("../db/db");
+const axios = require("axios");
 
 //POST request for new feature
 const newVideo = async (req, res) => {
