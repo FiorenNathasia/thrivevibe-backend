@@ -21,6 +21,7 @@ app.use("/api/videos", videoRouter);
 app.use("/api/comments", commentsRouter);
 app.use("/api/feed", feedRouter);
 
-app.listen(8181, () => {
-  console.log("server listening on 8181");
+const port = process.env.PORT || 8181;
+app.listen(port, () => {
+  console.log(`server listening on ${port}`);
 });

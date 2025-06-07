@@ -20,37 +20,48 @@ const createComment = async (req, res) => {
     res.status(500).json({ message: "Error adding comment" });
   }
 };
+
 //GET request for all comments for a video
 const getComments = async (req, res) => {
   const userId = res.locals.userId;
   const videoId = req.params.id;
 
   if (!videoId) {
-    res.status(400).send({ message: "Video ID is required" });
+    return res.status(400).send({ message: "Video ID is required" });
   }
 
   try {
     const video = await db("videos")
       .where({ id: videoId, user_id: userId })
-      .select()
       .first();
 
     if (!video) {
-      res.status(404).send({ message: "Video not found" });
+      return res.status(404).send({ message: "Video not found" });
     }
   } catch (error) {
-    res.status(500).send({ message: `Error retrieving video: ${error}` });
-    return;
+    return res
+      .status(500)
+      .send({ message: `Error retrieving video: ${error}` });
   }
+
   try {
     const comments = await db("comments")
-      .where({ video_id: videoId })
-      .select("*");
+      .join("users", "comments.user_id", "users.id")
+      .where("comments.video_id", videoId)
+      .select(
+        "comments.id",
+        "comments.comments",
+        "comments.created_at",
+        "users.first_name",
+        "users.last_name"
+      );
+
     res.status(200).send(comments);
   } catch (error) {
     res.status(500).send({ message: "Error retrieving comments" });
   }
 };
+
 module.exports = {
   createComment,
   getComments,

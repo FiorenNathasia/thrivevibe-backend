@@ -1,4 +1,5 @@
 const db = require("../db/db");
+const ytdl = require("@distube/ytdl-core");
 
 //POST request for new feature
 const newVideo = async (req, res) => {
@@ -7,18 +8,27 @@ const newVideo = async (req, res) => {
   if (!url || !prompt) {
     res.status(400).send({ message: "Please fill in all fields" });
   }
+
   const userId = res.locals.userId;
   try {
+    const videoInfo = await ytdl.getInfo(url);
+    const thumbnail =
+      videoInfo.videoDetails.thumbnails[
+        videoInfo.videoDetails.thumbnails.length - 1
+      ].url;
+
     const newEntry = await db("videos")
       .insert({
         user_id: userId,
         url,
         prompt,
+        thumbnail,
       })
       .returning("*");
     return res.status(200).send({ data: newEntry[0] });
   } catch (error) {
-    c;
+    console.log(error);
+    res.status(500).send({ message: `Error retrieving video` });
   }
 };
 
