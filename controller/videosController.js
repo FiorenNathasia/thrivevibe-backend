@@ -12,7 +12,7 @@ const newVideo = async (req, res) => {
   const userId = res.locals.userId;
   try {
     const videoData = await axios.get(
-      "https://api.supadata.ai/v1/youtube/video?id=" + videoUrl,
+      "https://api.supadata.ai/v1/youtube/video?id=" + url,
       {
         headers: {
           "x-api-key": process.env.SUPADATA_KEY,
