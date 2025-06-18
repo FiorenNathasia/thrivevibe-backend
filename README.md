@@ -3,7 +3,7 @@
 Backend API for the FitTech fullstack fitness application.  
 This service handles data management, user authentication, AI integration, and serves structured workout guides to the frontend.
 
-**Project's Frontend:** (https://github.com/FiorenNathasia/thrivevibe-frontend)
+**Project's Frontend:** https://github.com/FiorenNathasia/thrivevibe-frontend
 
 ---
 
