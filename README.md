@@ -14,7 +14,7 @@ This service handles data management, user authentication, AI integration, and s
 - PostgreSQL database for scalable data storage
 - Integration with OpenAI’s ChatGPT API for AI-powered workout generation
 - Transcript extraction and processing for workout videos
-- Supports workout favoriting and offline access
+- Supports workout favoriting function
 
 ---
 
