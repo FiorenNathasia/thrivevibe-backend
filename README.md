@@ -1,7 +1,7 @@
-# FitTech Backend 🏋️‍♂️
+# ThriveVibe Backend 🎥✨
 
-Backend API for the FitTech fullstack fitness application.  
-This service handles data management, user authentication, AI integration, and serves structured workout guides to the frontend.
+Backend API for the ThriveVibe crowdsourced video feedback platform.
+Manages user authentication, video and prompt submissions, feedback aggregation, and serves data to the frontend.
 
 **Project's Frontend:** https://github.com/FiorenNathasia/thrivevibe-frontend
 
@@ -11,10 +11,10 @@ This service handles data management, user authentication, AI integration, and s
 
 - RESTful API built with Express.js
 - User authentication using JWT and OAuth
-- PostgreSQL database for scalable data storage
-- Integration with OpenAI’s ChatGPT API for AI-powered workout generation
+- PostgreSQL database for storing videos, prompts, votes, and comments
+- Efficient centralization of feedback data for dashboard display
 - Transcript extraction and processing for workout videos
-- Supports workout favoriting function
+- Supports creation and management of videos, prompts, and user feedback
 
 ---
 
@@ -24,7 +24,5 @@ This service handles data management, user authentication, AI integration, and s
 - **Express.js**
 - **PostgreSQL**
 - **JWT (OAuth)** for secure authentication
-- **OpenAI ChatGPT API** for AI processing
 
 ---
-
