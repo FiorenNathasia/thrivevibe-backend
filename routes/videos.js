@@ -9,4 +9,5 @@ router.put("/:id/upvote", videosController.updateUpvote);
 router.put("/:id/downvote", videosController.updateDownvote);
 router.patch("/:id", videosController.editVideo);
 router.delete("/:id", videosController.deleteVideo);
+router.get("/:id/summary", videosController.getVideoSummary);
 module.exports = router;

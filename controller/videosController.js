@@ -1,5 +1,6 @@
 const db = require("../db/db");
 const axios = require("axios");
+const chatgpt = require("../utils/openai");
 
 //POST request for new feature
 const newVideo = async (req, res) => {
@@ -99,6 +100,8 @@ const updateDownvote = async (req, res) => {
   }
 };
 
+//PATCH request for editVideo
+
 const editVideo = async (req, res) => {
   const userId = res.locals.userId;
   const videoId = req.params.id;
@@ -122,6 +125,7 @@ const editVideo = async (req, res) => {
   }
 };
 
+//DELETE request for video
 const deleteVideo = async (req, res) => {
   const userId = res.locals.userId;
   const videoId = req.params.id;
@@ -142,6 +146,46 @@ const deleteVideo = async (req, res) => {
   }
 };
 
+//GET request for video summary
+const getVideoSummary = async (req, res) => {
+  const userId = res.locals.userId;
+  const videoId = req.params.id;
+
+  try {
+    const video = await db("videos")
+      .where({ id: videoId, user_id: userId })
+      .first();
+
+    if (!video) {
+      return res.status(404).send({ message: "Video not found" });
+    }
+
+    const comments = await db("comments")
+      .join("users", "comments.user_id", "users.id")
+      .where("comments.video_id", videoId)
+      .select("comments.comments", "comments.created_at");
+
+    const commentsText = comments
+      .map((comment) => `${comment.comments}`)
+      .join("/n");
+
+    const feedbackSummary = await chatgpt(
+      commentsText,
+      video.upvote,
+      video.downvote
+    );
+
+    await db("videos").where({ id: videoId }).update({
+      summary: feedbackSummary,
+      updated_at: new Date(),
+    });
+    res.status(200).send({ data: feedbackSummary });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   newVideo,
   getVideos,
@@ -150,4 +194,5 @@ module.exports = {
   updateDownvote,
   editVideo,
   deleteVideo,
+  getVideoSummary,
 };
