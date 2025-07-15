@@ -161,25 +161,46 @@ const getVideoSummary = async (req, res) => {
     }
 
     const comments = await db("comments")
-      .join("users", "comments.user_id", "users.id")
-      .where("comments.video_id", videoId)
-      .select("comments.comments", "comments.created_at");
+      .where("video_id", videoId)
+      .select("comments");
 
+    const commentCount = comments.length;
     const commentsText = comments
       .map((comment) => `${comment.comments}`)
-      .join("/n");
+      .join("\n");
 
-    const feedbackSummary = await chatgpt(
-      commentsText,
-      video.upvote,
-      video.downvote
-    );
+    // Calculate vote ratio
+    const up = video.upvote;
+    const down = video.downvote;
+    const voteRatio = down === 0 ? up : up / down;
 
-    await db("videos").where({ id: videoId }).update({
-      summary: feedbackSummary,
-      updated_at: new Date(),
-    });
-    res.status(200).send({ data: feedbackSummary });
+    // Compare with stored values
+    const updateSummary =
+      Math.abs(voteRatio - video.last_vote_ratio) > 0.5 ||
+      commentCount - video.last_comment_count >= 3;
+
+    if (!updateSummary) {
+      return res.status(200).send({
+        data: video.summary,
+        updated_at: video.updated_at,
+      });
+    }
+
+    const feedbackSummary = await chatgpt(commentsText, up, down);
+
+    const [updated] = await db("videos")
+      .where({ id: videoId })
+      .update({
+        summary: feedbackSummary,
+        last_comment_count: commentCount,
+        last_vote_ratio: voteRatio,
+        updated_at: new Date(),
+      })
+      .returning(["summary", "updated_at"]);
+
+    res
+      .status(200)
+      .send({ data: updated.summary, updated_at: updated.updated_at });
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: "Internal server error" });
